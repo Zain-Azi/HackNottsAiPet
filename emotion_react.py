@@ -2,16 +2,11 @@
 from dotenv import load_dotenv
 import os
 import openai
+from openai import OpenAI
 import re
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv(
-    "OPENAI_API_KEY"
-)  # Get OpenAI API key from environment variables
-if not OPENAI_API_KEY:
-    raise ValueError(
-        "OPENAI_API_KEY is not in .env file."
-    )
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 
 def dragon_output(user_input):
