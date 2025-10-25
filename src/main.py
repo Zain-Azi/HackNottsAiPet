@@ -15,7 +15,7 @@ textbox_x = (window_w - textbox_w) // 2
 textbox_y = window_h - textbox_h - 20
 
 clock = pygame.time.Clock()
-FPS = 3
+FPS = 30
 
 dragon = Dragon("Cheppie")
 
@@ -56,8 +56,10 @@ while not exit:
                 bubble = SpeechBubble(text=x[0])
                 
             
-    sprite_value = (sprite_value + 1) % 2
-    dragon.change_health(-10)
+    if pygame.time.get_ticks() - last_anim_update > 333:
+        last_anim_update = pygame.time.get_ticks()
+        sprite_value = (sprite_value + 1) % 2
+        dragon.change_health(-10)
 
     window.update(sprite_value + 1, dragon.get_mood(), dragon.get_health())
     textbox.draw(window._Window__screen)
