@@ -9,9 +9,8 @@ window_h = 720
 
 textbox_w = 1100
 textbox_h = 60
-textbox_x = (window_w - textbox_w) // 2  # centers horizontally
-textbox_y = window_h - textbox_h - 20  # 20 px margin from bottom
-
+textbox_x = (window_w - textbox_w) // 2
+textbox_y = window_h - textbox_h - 20
 window = Window("Cheppie the Dragon", window_w, window_h)
 textbox = TextBox(textbox_x, textbox_y, textbox_w, textbox_h)
 bubble = SpeechBubble(500, 300, 300, 100, text="Hello, I am Cheppie!")
