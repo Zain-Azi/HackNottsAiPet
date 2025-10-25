@@ -52,6 +52,9 @@ while not exit:
                 exit = True
             
         result = textbox.handle_event(event)
+        if pygame.mixer.get_init():
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
         if result is not None:
             user_input = result
             if user_input == "hello":
@@ -72,7 +75,20 @@ while not exit:
                 model_id="eleven_multilingual_v2",
                 output_format="mp3_44100_128",
             )
-            play(audio)
+
+            audio_bytes = b"".join(audio)
+
+            with open("temp_audio.mp3", "wb") as f:
+                f.write(audio_bytes)
+
+            pygame.mixer.init()
+            pygame.mixer.music.load("temp_audio.mp3")
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                bubble.draw(window._Window__screen)
+                pygame.display.update()
+                pygame.time.wait(100)
+
             with open("chatlog.txt", "a") as f:
                 f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
 
