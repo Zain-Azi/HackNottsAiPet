@@ -13,7 +13,7 @@ textbox_x = (window_w - textbox_w) // 2
 textbox_y = window_h - textbox_h - 20
 window = Window("Cheppie the Dragon", window_w, window_h)
 textbox = TextBox(textbox_x, textbox_y, textbox_w, textbox_h)
-bubble = SpeechBubble(500, 300, 300, 100, text="Hello, I am Cheppie!")
+bubble = SpeechBubble(500, 300, text="Hello, I am Cheppie!")
 
 exit = False
 
@@ -26,9 +26,9 @@ while not exit:
         if result is not None:
             user_input = result
             if user_input == "hello":
-                bubble = SpeechBubble(500, 300, 300, 100, text="wagwan")
+                bubble = SpeechBubble(500, 300, text="wagwan")
             else:
-                bubble = SpeechBubble(500, 300, 300, 100, text="ok then...")
+                bubble = SpeechBubble(500, 300, text="ok then...")
             
 
     window.update()
