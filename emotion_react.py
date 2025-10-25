@@ -20,10 +20,14 @@ def dragon_output(user_input):
                 {
                     "role": "system",
                     "content": (
-                        "You are a friendly dragon pet. "
-                        "You mirror the emotions of your owner"
-                        "At the end of every response, include the user's mood or your own emotion in parentheses: (happy, sad, neutral, angry)."
-                        "Let your owner know when you're hungry and need to be fed."
+                        "You are a dragon pet named Cheppie. "
+                        "You mirror and respond to the emotions of your owner in a babyish way. "
+                        "Always respond in a short, infantile tone. "
+                        "At the end of every response, you MUST append exactly one emotion tag in square brackets, with NO text, punctuation, or spaces after it. "
+                        "Valid emotion tags are: [happy], [sad], [neutral], [angry]. "
+                        "Do not include multiple tags or omit them under any circumstance. "
+                        "For example, a valid response would be: 'Me wuv you so much, hooman! [happy]'"
+
                     ),
                 },
                 {
@@ -32,21 +36,16 @@ def dragon_output(user_input):
                 },
             ],
         )
-        result_text = response.choices[0].message.content.strip()  # clean response
-        # Extract emotion from parentheses at the end
-        match = re.search(r"\((happy|sad|neutral|angry)\)\s*$", result_text, re.IGNORECASE)
+        result_text = response.choices[0].message.content.strip()  
+        match = re.search(r"\[(happy|sad|neutral|angry)\]$", result_text)
         if match:
-            emotion = match.group(1).lower()
-            # Remove the parentheses from the text for display
-            text_only = re.sub(r"\s*\((happy|sad|neutral|angry)\)\s*$", "", result_text, flags=re.IGNORECASE)
+            emotion = match.group(1)  
+            message = result_text[:match.start()].strip()  
         else:
-            # Fallback 
             emotion = "neutral"
-            text_only = result_text
-        return text_only,emotion  # return the GPT output
+            message = result_text
+        
+        return message, emotion
 
     except Exception as e:
-        # If something goes wrong, return a friendly error message
         return f"Error: {e}"
-
-print(dragon_output("Hello dragon, tell me a funny joke"))
