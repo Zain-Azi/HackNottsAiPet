@@ -37,15 +37,6 @@ while not exit:
             if event.key == pygame.K_ESCAPE:
                 exit = True
             
-            if event.key == pygame.K_a:
-                dragon.set_mood("angry")
-            if event.key == pygame.K_h:
-                dragon.set_mood("happy")
-            if event.key == pygame.K_s:
-                dragon.set_mood("sad")
-            if event.key == pygame.K_n:
-                dragon.set_mood("neutral")
-
         result = textbox.handle_event(event)
         if result is not None:
             user_input = result
