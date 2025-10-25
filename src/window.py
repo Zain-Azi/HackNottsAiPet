@@ -13,8 +13,8 @@ class Window:
 
         self.__images = {
             "background": pygame.image.load("assets/background_proto.png").convert(),
-            "idle1": pygame.image.load("assets/idle1.JPEG").convert_alpha(),
-            "idle2": pygame.image.load("assets/idle2.JPEG").convert_alpha(),
+            "neutral1": pygame.image.load("assets/idle1.JPEG").convert_alpha(),
+            "neutral2": pygame.image.load("assets/idle2.JPEG").convert_alpha(),
             "happy1": pygame.image.load("assets/happy1.JPEG").convert_alpha(),
             "happy2": pygame.image.load("assets/happy2.JPEG").convert_alpha(),
             "sad1": pygame.image.load("assets/sad1.JPEG").convert_alpha(),
@@ -23,11 +23,15 @@ class Window:
             "angry2": pygame.image.load("assets/angry2.JPEG").convert_alpha()
         }
 
-    def update(self):
+    def update(self, counter, mood, hp):
         bg = pygame.transform.scale(self.__images["background"], (self.WIDTH, self.HEIGHT))
         self.__screen.blit(bg, (0, 0))
-        self.__screen.blit(pygame.transform.scale(self.__images["idle1"], (400, 400)),
-                        ((self.WIDTH - 400)/2, self.HEIGHT - 600))
+        self.__screen.blit(pygame.transform.scale(self.__images[mood+str(counter)], (400, 400)),
+                        ((self.WIDTH - 400)/2, self.HEIGHT - 500))
+        
+        pygame.draw.rect(self.__screen, (107, 61, 5), (20, 40, 50, 510), border_radius=20)
+        pygame.draw.rect(self.__screen, (0, 0, 0), (25, 45, 40, 500), border_radius=15)
+        pygame.draw.rect(self.__screen, (4, 219, 8), (25, 45+(1000-hp)/2, 40, hp/2), border_radius=15)
 
     def resize(self, width, height):
         self.width = width
