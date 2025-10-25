@@ -54,6 +54,9 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
+            with open("chatlog.txt", "a") as f:
+                f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
+
                 
             
     sprite_value = (sprite_value + 1) % 2
