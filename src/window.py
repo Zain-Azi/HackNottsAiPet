@@ -8,7 +8,7 @@ class Window:
         self.HEIGHT = height
 
         pygame.init()
-        self.__screen=pygame.display.set_mode((width,height),pygame.SRCALPHA)
+        self.__screen=pygame.display.set_mode((width,height),pygame.FULLSCREEN)
         pygame.display.set_caption(title)
 
         self.__images = {
