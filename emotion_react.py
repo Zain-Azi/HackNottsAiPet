@@ -5,7 +5,9 @@ import openai
 from openai import OpenAI
 import re
 
+load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 
 
@@ -45,3 +47,5 @@ def dragon_output(user_input):
     except Exception as e:
         # If something goes wrong, return a friendly error message
         return f"Error: {e}"
+    
+print(dragon_output("Hello dragon, how are you feeling today?"))
