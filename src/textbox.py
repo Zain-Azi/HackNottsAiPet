@@ -3,7 +3,7 @@ import pygame
 class TextBox:
     def __init__(self, x, y, w, h, font_size=24, font_name=None, text_color=(50,50,50),
                  box_color=(255,255,255), outline_color=(0,0,0), outline_thickness=3,
-                 corner_radius=15, placeholder="Speak to your pet", send_button=True):
+                 corner_radius=15, placeholder="Speak to your pet", send_button=True, record_button=True):
         self.rect = pygame.Rect(x, y, w, h)
         self.color = box_color
         self.text_color = text_color
@@ -27,15 +27,28 @@ class TextBox:
             self.button_color = (79, 0, 0)
             self.button_text_color = (255, 255, 255)
             self.button_font = pygame.font.SysFont("Comic Sans MS", font_size)
+        
+        self.record_button_enabled = record_button
+        if self.record_button_enabled:
+            self.record_button_width = 80
+            self.record_button_height = h
+            # Place it left of the send button
+            self.record_button_rect = pygame.Rect(x + w - 80 - 90, y, self.record_button_width, self.record_button_height)
+            self.record_button_color = (0, 79, 0)
+            self.record_button_text_color = (255, 255, 255)
+            self.record_button_font = pygame.font.SysFont("Comic Sans MS", font_size)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.active = self.rect.collidepoint(event.pos)
-
+            #check if send button was clicked
             if self.send_button_enabled and self.button_rect.collidepoint(event.pos):
                 entered_text = self.text
                 self.text = ""
                 return entered_text
+            # Check if record button was clicked
+            if hasattr(self, 'record_button_enabled') and self.record_button_enabled and self.record_button_rect.collidepoint(event.pos):
+                return {"action": "record"}  # Return a dict signaling a record action
 
         if event.type == pygame.KEYDOWN and self.active:
             if event.key == pygame.K_RETURN:
@@ -47,6 +60,8 @@ class TextBox:
             else:
                 self.text += event.unicode
         return None
+    
+
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, border_radius=self.corner_radius)
@@ -61,3 +76,11 @@ class TextBox:
             btn_text = self.button_font.render("Send", True, self.button_text_color)
             screen.blit(btn_text, (self.button_rect.x + (self.button_width - btn_text.get_width())//2,
                                    self.button_rect.y + (self.button_height - btn_text.get_height())//2))
+        
+        if self.record_button_enabled:
+            pygame.draw.rect(screen, self.record_button_color, self.record_button_rect, border_radius=10)
+            pygame.draw.rect(screen, self.outline_color, self.record_button_rect, width=2, border_radius=10)
+            record_text = self.record_button_font.render("Rec", True, self.record_button_text_color)
+            screen.blit(record_text, (self.record_button_rect.x + (self.record_button_width - record_text.get_width())//2,
+                              self.record_button_rect.y + (self.record_button_height - record_text.get_height())//2))
+

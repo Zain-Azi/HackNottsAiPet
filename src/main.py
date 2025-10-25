@@ -6,6 +6,18 @@ from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
 
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
+import os
+
+
+load_dotenv()
+elevenlabs = ElevenLabs(
+
+  api_key=os.getenv("ELEVENLABS_API_KEY"),
+
+)
 window_w = 1280
 window_h = 720
 
@@ -42,6 +54,9 @@ while not exit:
                 dragon.set_action("breathe_fire")
             
         result = textbox.handle_event(event)
+        if pygame.mixer.get_init():
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
         if result is not None:
             dragon.set_action("talk")
             user_input = result
@@ -57,6 +72,29 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
+            audio = elevenlabs.text_to_speech.convert(
+                text=bubble.get_text(),
+                voice_id="EDO68oHvNm0rxTewQZSK",
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128",
+            )
+
+            audio_bytes = b"".join(audio)
+
+            with open("temp_audio.mp3", "wb") as f:
+                f.write(audio_bytes)
+
+            pygame.mixer.init()
+            pygame.mixer.music.load("temp_audio.mp3")
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                bubble.draw(window._Window__screen)
+                pygame.display.update()
+                pygame.time.wait(100)
+
+            with open("chatlog.txt", "a") as f:
+                f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
+
                 
             
     if pygame.time.get_ticks() - last_anim_update > 333:
