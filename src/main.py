@@ -20,7 +20,7 @@ dragon = Dragon("Cheppie")
 
 window = Window("Cheppie the Dragon", window_w, window_h)
 textbox = TextBox(textbox_x, textbox_y, textbox_w, textbox_h)
-bubble = SpeechBubble(500, 80, 300, 100, text="Hello, I am "+ dragon.get_name()+"!")
+bubble = SpeechBubble(500, 300, text="Hello, I am "+ dragon.get_name()+"!")
 
 exit = False
 
@@ -49,9 +49,9 @@ while not exit:
         if result is not None:
             user_input = result
             if user_input == "hello":
-                bubble = SpeechBubble(500, 300, 300, 100, text="wagwan")
+                bubble = SpeechBubble(500, 300, text="wagwan")
             else:
-                bubble = SpeechBubble(500, 300, 300, 100, text="ok then...")
+                bubble = SpeechBubble(500, 300, text="ok then...")
             
     sprite_value = (sprite_value + 1) % 2
     dragon.change_health(-10)
