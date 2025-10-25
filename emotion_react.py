@@ -1,10 +1,12 @@
-#create a fucntion that takes in useriinput and gives output using an LLM 
-from dotenv import load_dotenv
+#create a fucntion that takes in useriinput and gives output using an LLM
 import os
-import openai
-from openai import OpenAI
 import re
 
+import openai
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()  
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
@@ -30,7 +32,7 @@ def dragon_output(user_input):
             ],
         )
         result_text = response.choices[0].message.content.strip()  # clean response
-         # Extract emotion from parentheses at the end
+        # Extract emotion from parentheses at the end
         match = re.search(r"\((happy|sad|neutral|angry)\)\s*$", result_text, re.IGNORECASE)
         if match:
             emotion = match.group(1).lower()
@@ -45,3 +47,5 @@ def dragon_output(user_input):
     except Exception as e:
         # If something goes wrong, return a friendly error message
         return f"Error: {e}"
+
+print(dragon_output("Hello dragon, tell me a funny joke"))
