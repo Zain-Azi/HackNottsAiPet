@@ -1,5 +1,6 @@
 import pygame
 
+import emotion_react
 from dragon import Dragon
 from speechbubble import SpeechBubble
 from textbox import TextBox
@@ -38,15 +39,6 @@ while not exit:
             if event.key == pygame.K_ESCAPE:
                 exit = True
             
-            if event.key == pygame.K_a:
-                dragon.set_mood("angry")
-            if event.key == pygame.K_h:
-                dragon.set_mood("happy")
-            if event.key == pygame.K_s:
-                dragon.set_mood("sad")
-            if event.key == pygame.K_n:
-                dragon.set_mood("neutral")
-
         result = textbox.handle_event(event)
         if result is not None:
             user_input = result
@@ -59,13 +51,13 @@ while not exit:
             elif user_input == "ok":
                 bubble = SpeechBubble(text="Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh ")
             else:
-                bubble = SpeechBubble(text="ok then...")
-    
-    now = pygame.time.get_ticks()
-    if now - last_anim_update > 10:
-        sprite_value = (sprite_value + 1) % 2
-        dragon.change_health(-10)
-        last_anim_update = now
+                x = emotion_react.dragon_output(user_input, dragon.get_health())
+                dragon.set_mood(x[1])
+                bubble = SpeechBubble(text=x[0])
+                
+            
+    sprite_value = (sprite_value + 1) % 2
+    dragon.change_health(-10)
 
     window.update(sprite_value + 1, dragon.get_mood(), dragon.get_health())
     textbox.draw(window._Window__screen)
