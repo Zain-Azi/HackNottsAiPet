@@ -11,6 +11,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 
+
 def dragon_output(user_input):
     try:
         response = openai.chat.completions.create(
