@@ -4,6 +4,7 @@ from dragon import Dragon
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
+import emotion_react
 
 window_w = 1280
 window_h = 720
@@ -57,7 +58,10 @@ while not exit:
             elif user_input == "ok":
                 bubble = SpeechBubble(text="Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh ")
             else:
-                bubble = SpeechBubble(text="ok then...")
+                x = emotion_react.dragon_output(user_input)
+                dragon.set_mood(x[1])
+                bubble = SpeechBubble(text=x[0])
+                
             
     sprite_value = (sprite_value + 1) % 2
     dragon.change_health(-10)
