@@ -46,4 +46,7 @@ class SpeechBubble:
 
         for i, line in enumerate(lines):
             text_surf = self.font.render(line, True, self.text_color)
-            screen.blit(text_surf, (self.rect.x + 10, self.rect.y + 10 + i * self.font.get_height()))
+            screen.blit(text_surf, (self.rect.x + 10, self.rect.y + 10 + i * self.font.get_height()))#
+            
+    def get_text(self):
+            return self.text
