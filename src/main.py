@@ -26,6 +26,8 @@ exit = False
 
 sprite_value = 0
 
+last_anim_update = pygame.time.get_ticks()
+
 while not exit:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -58,9 +60,12 @@ while not exit:
                 bubble = SpeechBubble(text="Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh ")
             else:
                 bubble = SpeechBubble(text="ok then...")
-            
-    sprite_value = (sprite_value + 1) % 2
-    dragon.change_health(-10)
+    
+    now = pygame.time.get_ticks()
+    if now - last_anim_update > 10:
+        sprite_value = (sprite_value + 1) % 2
+        dragon.change_health(-10)
+        last_anim_update = now
 
     window.update(sprite_value + 1, dragon.get_mood(), dragon.get_health())
     textbox.draw(window._Window__screen)

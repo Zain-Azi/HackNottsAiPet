@@ -12,7 +12,7 @@ class Window:
         pygame.display.set_caption(title)
 
         self.__images = {
-            "background": pygame.image.load("assets/background_proto.png").convert(),
+            "background": pygame.image.load("assets/background.png").convert(),
             "neutral1": pygame.image.load("assets/idle1.png").convert_alpha(),
             "neutral2": pygame.image.load("assets/idle2.png").convert_alpha(),
             "happy1": pygame.image.load("assets/happy1.png").convert_alpha(),
