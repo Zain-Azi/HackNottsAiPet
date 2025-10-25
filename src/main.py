@@ -1,10 +1,8 @@
 import pygame
 
-pygame.init()
+from window import Window
 
-canvas = pygame.display.set_mode((1280, 720))
-
-pygame.display.set_caption("HackNotts Pet")
+window = Window("Hacknotts pet", 800, 600)
 exit = False
 
 while not exit:
