@@ -6,6 +6,18 @@ from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
 
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
+import os
+
+
+load_dotenv()
+elevenlabs = ElevenLabs(
+
+  api_key=os.getenv("ELEVENLABS_API_KEY"),
+
+)
 window_w = 1280
 window_h = 720
 
@@ -54,6 +66,13 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
+            audio = elevenlabs.text_to_speech.convert(
+                text=bubble.get_text(),
+                voice_id="EDO68oHvNm0rxTewQZSK",
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128",
+            )
+            play(audio)
             with open("chatlog.txt", "a") as f:
                 f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
 
