@@ -11,6 +11,14 @@ class Window:
         self.__screen=pygame.display.set_mode((width,height),pygame.SRCALPHA)
         pygame.display.set_caption(title)
 
+        self.__images = {
+            "background": pygame.image.load("assets/background_proto.png").convert(),
+        }
+
+    def update(self):
+        bg = pygame.transform.scale(self.__images["background"], (self.WIDTH, self.HEIGHT))
+        self.__screen.blit(bg, (0, 0))
+
     def resize(self, width, height):
         self.width = width
         self.height = height
