@@ -3,6 +3,7 @@ class Dragon:
         self.__name = "Cheppie"
         self.__health = 1000
         self.__mood = "neutral"
+        self.__action = "idle"
 
     def get_name(self):
         return self.__name
@@ -12,6 +13,12 @@ class Dragon:
     
     def get_mood(self):
         return self.__mood
+    
+    def get_action(self):
+        return self.__action
+    
+    def set_action(self, action):
+        self.__action = action
     
     def set_name(self, name):
         self.__name = name

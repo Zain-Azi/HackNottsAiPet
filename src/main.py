@@ -38,9 +38,12 @@ while not exit:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 exit = True
+            if event.key == pygame.K_f:
+                dragon.set_action("breathe_fire")
             
         result = textbox.handle_event(event)
         if result is not None:
+            dragon.set_action("talk")
             user_input = result
             if user_input == "hello":
                 bubble = SpeechBubble(text="wagwan")
@@ -58,10 +61,24 @@ while not exit:
             
     if pygame.time.get_ticks() - last_anim_update > 333:
         last_anim_update = pygame.time.get_ticks()
-        sprite_value = (sprite_value + 1) % 2
+        sprite_value = (sprite_value + 1) % 6
         dragon.change_health(-10)
+    
+    if dragon.get_action() == "breathe_fire":
+        if sprite_value == 0:
+            cheppie = "neutral1"
+        else:
+            cheppie = "fire" + str(sprite_value + 1)
+            if sprite_value == 5:
+                dragon.set_action("idle")
+    else:
+        sprite_value = sprite_value % 2
+        cheppie = dragon.get_mood() + str(sprite_value + 1)
+        if dragon.get_action() == "talk" and sprite_value==1:
+            cheppie = "talk" + cheppie
 
-    window.update(sprite_value + 1, dragon.get_mood(), dragon.get_health())
+
+    window.update(cheppie, dragon.get_health())
     textbox.draw(window._Window__screen)
     bubble.draw(window._Window__screen)
     pygame.display.update()
