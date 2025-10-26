@@ -105,7 +105,7 @@ while not exit:
     if pygame.time.get_ticks() - last_anim_update > 333:
         last_anim_update = pygame.time.get_ticks()
         sprite_value = (sprite_value + 1) % 6
-        dragon.change_health(-10)
+        dragon.change_health(-2)
     
     if dragon.get_action() == "breathe_fire":
         if sprite_value == 0:
