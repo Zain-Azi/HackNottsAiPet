@@ -1,6 +1,7 @@
 import os
 
 import pygame
+import serial
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
@@ -11,6 +12,12 @@ from feedbutton import FeedButton
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+import os
+
+# Arduino serial setup
+arduino = serial.Serial('COM5', 9600, timeout=1)
 
 load_dotenv()
 elevenlabs = ElevenLabs(
@@ -25,7 +32,8 @@ textbox_w = 1100
 textbox_h = 60
 textbox_x = (window_w - textbox_w) // 2
 textbox_y = window_h - textbox_h - 20
-
+pygame_icon = pygame.image.load('assets\idle1.PNG')
+pygame.display.set_icon(pygame_icon)
 clock = pygame.time.Clock()
 FPS = 30
 
@@ -39,11 +47,20 @@ feedbutton = FeedButton(15, window_h - 150, 100, 50)
 exit = False
 
 sprite_value = 0
+ta = 0
 
 last_anim_update = pygame.time.get_ticks()
 
 while not exit:
     clock.tick(FPS)
+    
+    #Arduino button
+    if arduino.in_waiting > 0:
+        line = arduino.readline().decode().strip()
+        if line == "pressed":
+            dragon.set_action("breathe_fire")
+            dragon.change_health(-50)
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit = True
@@ -59,9 +76,8 @@ while not exit:
             dragon.change_health(100)
 
         result = textbox.handle_event(event)
-        if pygame.mixer.get_init():
-            pygame.mixer.music.stop()
-            pygame.mixer.quit()
+        if os.path.exists("temp_audio.mp3"):
+            os.remove("temp_audio.mp3")
         if result is not None:
             dragon.set_action("talk")
             user_input = result
@@ -86,16 +102,19 @@ while not exit:
 
             audio_bytes = b"".join(audio)
 
-            with open("temp_audio.mp3", "wb") as f:
+            
+            with open(f"temp_audio{ta}.mp3", "wb") as f:
                 f.write(audio_bytes)
-
-            pygame.mixer.init()
-            pygame.mixer.music.load("temp_audio.mp3")
+                
+            if not pygame.mixer.get_init():
+                pygame.mixer.music.stop()
+                pygame.mixer.quit()
+                pygame.mixer.init()
+            pygame.mixer.music.load(f"temp_audio{ta}.mp3")
             pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                bubble.draw(window._Window__screen)
-                pygame.display.update()
-                pygame.time.wait(100)
+            ta += 1
+           
+
 
             with open("chatlog.txt", "a") as f:
                 f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
@@ -126,3 +145,11 @@ while not exit:
     bubble.draw(window._Window__screen)
     feedbutton.draw(window._Window__screen)
     pygame.display.update()
+
+for f in os.listdir():
+    if f.startswith("temp_audio"):
+        try:
+            os.remove(f)
+        except PermissionError:
+            print(f"Could not delete {f} (still in use).")
+pygame.quit()
