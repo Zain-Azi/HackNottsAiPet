@@ -20,7 +20,7 @@ from vosk import Model, KaldiRecognizer
 import pyaudio, json, threading
 
 class VoskRecorder:
-   def __init__(self, model_path="/Users/jakedarkoh/Documents/HackNottsAiPet/vosk-model-small-en-us-0.15", sample_rate=16000):
+   def __init__(self, model_path="vosk-model-small-en-us-0.15", sample_rate=16000):
        self.model = Model(model_path)
        self.sample_rate = sample_rate
        self.p = pyaudio.PyAudio()
@@ -99,7 +99,7 @@ textbox_w = 1100
 textbox_h = 60
 textbox_x = (window_w - textbox_w) // 2
 textbox_y = window_h - textbox_h - 20
-pygame_icon = pygame.image.load('/Users/jakedarkoh/Documents/HackNottsAiPet/assets/idle1.PNG')
+pygame_icon = pygame.image.load('assets\idle1.PNG')
 pygame.display.set_icon(pygame_icon)
 clock = pygame.time.Clock()
 FPS = 30
@@ -158,7 +158,7 @@ while not exit:
             if user_input == "2":
                 bubble = SpeechBubble(text="wagwaaaaaaaaaaaaaaaaaaaaaaaaaaaaan")
             elif user_input == "ok":
-                bubble = SpeechBubble(text="Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh ")
+                bubble = SpeechBubble(text="Bleh")
             else:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
@@ -183,7 +183,6 @@ while not exit:
             pygame.mixer.music.load(f"temp_audio{ta}.mp3")
             pygame.mixer.music.play()
             ta += 1
-           
 
 
             with open("chatlog.txt", "a") as f:
