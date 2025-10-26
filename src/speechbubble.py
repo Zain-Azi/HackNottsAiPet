@@ -1,9 +1,10 @@
 import pygame
 
+
 class SpeechBubble:
-    def __init__(self, text="", font_size=20, text_color=(0,0,0),
+    def __init__(self, text="", font_size=30, text_color=(0,0,0),
                  bubble_color=(255,255,255), outline_color=(0,0,0), corner_radius=15):
-        self.font = pygame.font.SysFont("Papyrus", font_size)
+        self.font = pygame.font.SysFont("Comic Sans", font_size)
         self.text = text
         text_width, text_height = self.font.size(self.text)
         if text_width > 1100:

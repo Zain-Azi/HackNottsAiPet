@@ -12,9 +12,6 @@ from feedbutton import FeedButton
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
-from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
-import os
 
 # Arduino serial setup
 try:
@@ -66,7 +63,7 @@ while not exit:
                 dragon.set_action("breathe_fire")
                 dragon.change_health(-50)
     except:
-        print("tried")
+        pass
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -100,27 +97,30 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
-            audio = elevenlabs.text_to_speech.convert(
-                text=bubble.get_text(),
-                voice_id="EDO68oHvNm0rxTewQZSK",
-                model_id="eleven_multilingual_v2",
-                output_format="mp3_44100_128",
-            )
 
-            audio_bytes = b"".join(audio)
+            try:
+                audio = elevenlabs.text_to_speech.convert(
+                    text=bubble.get_text(),
+                    voice_id="EDO68oHvNm0rxTewQZSK",
+                    model_id="eleven_multilingual_v2",
+                    output_format="mp3_44100_128",
+                )
 
-            
-            with open(f"temp_audio{ta}.mp3", "wb") as f:
-                f.write(audio_bytes)
+                audio_bytes = b"".join(audio)
+
                 
-            if not pygame.mixer.get_init():
-                pygame.mixer.music.stop()
-                pygame.mixer.quit()
-                pygame.mixer.init()
-            pygame.mixer.music.load(f"temp_audio{ta}.mp3")
-            pygame.mixer.music.play()
-            ta += 1
-           
+                with open(f"temp_audio{ta}.mp3", "wb") as f:
+                    f.write(audio_bytes)
+                    
+                if not pygame.mixer.get_init():
+                    pygame.mixer.music.stop()
+                    pygame.mixer.quit()
+                    pygame.mixer.init()
+                pygame.mixer.music.load(f"temp_audio{ta}.mp3")
+                pygame.mixer.music.play()
+                ta += 1
+            except:
+                pass
 
 
             with open("chatlog.txt", "a") as f:
