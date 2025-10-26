@@ -42,7 +42,7 @@ class Window:
         
         pygame.draw.rect(self.__screen, (0, 0, 0), (35, 45, 60, 500), border_radius=20)
         pygame.draw.rect(self.__screen, (4, 219, 8), (35, 45+(1000-hp)/2, 60, hp/2), border_radius=20)
-        pygame.draw.rect(self.__screen, (107, 61, 5), (30, 40, 70, 510), border_radius=25, width=5)
+        pygame.draw.rect(self.__screen, (107, 61, 5), (25, 35, 80, 520), border_radius=30, width=10)
 
     def resize(self, width, height):
         self.width = width
