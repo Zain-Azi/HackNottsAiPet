@@ -80,3 +80,6 @@ class TextBox:
             screen.blit(record_text, (self.record_button_rect.x + (self.record_button_width - record_text.get_width())//2,
                               self.record_button_rect.y + (self.record_button_height - record_text.get_height())//2))
 
+    def set_recording(self, is_rec):
+           self.is_recording = is_rec
+           self.record_button_color = (150, 0, 0) if is_rec else (0, 79, 0)
