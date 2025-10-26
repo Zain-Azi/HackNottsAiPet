@@ -12,6 +12,72 @@ from feedbutton import FeedButton
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+import os
+
+from vosk import Model, KaldiRecognizer
+import pyaudio, json, threading
+
+class VoskRecorder:
+   def __init__(self, model_path="vosk-model-small-en-us-0.15", sample_rate=16000):
+       self.model = Model(model_path)
+       self.sample_rate = sample_rate
+       self.p = pyaudio.PyAudio()
+       self.stream = None
+       self.recognizer = None
+       self.thread = None
+       self.stop_event = threading.Event()
+       self._text_lock = threading.Lock()
+       self._text = []
+
+
+   def _loop(self):
+       while not self.stop_event.is_set():
+           data = self.stream.read(4096, exception_on_overflow=False)
+           if self.recognizer.AcceptWaveform(data):
+               result = json.loads(self.recognizer.Result())
+               t = result.get("text", "").strip()
+               if t:
+                   with self._text_lock:
+                       self._text.append(t)
+       final = json.loads(self.recognizer.FinalResult())
+       t = final.get("text", "").strip()
+       if t:
+           with self._text_lock:
+               self._text.append(t)
+
+
+   def start(self):
+       if self.thread and self.thread.is_alive():
+           return
+       self.stop_event.clear()
+       self.recognizer = KaldiRecognizer(self.model, self.sample_rate)
+       self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=self.sample_rate,
+                                 input=True, frames_per_buffer=8192)
+       self.stream.start_stream()
+       with self._text_lock:
+           self._text = []
+       self.thread = threading.Thread(target=self._loop, daemon=True)
+       self.thread.start()
+       print("🎙️ recording started")
+
+
+   def stop(self) -> str:
+       if not self.thread:
+           return ""
+       self.stop_event.set()
+       self.thread.join()
+       self.stream.stop_stream()
+       self.stream.close()
+       self.stream = None
+       self.thread = None
+       text = ""
+       with self._text_lock:
+           text = " ".join(self._text).strip()
+           self._text = []
+       print("🛑 recording stopped")
+       return text
 
 # Arduino serial setup
 try:
@@ -63,7 +129,7 @@ while not exit:
                 dragon.set_action("breathe_fire")
                 dragon.change_health(-50)
     except:
-        pass
+        print("tried")
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -97,30 +163,27 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
+            audio = elevenlabs.text_to_speech.convert(
+                text=bubble.get_text(),
+                voice_id="EDO68oHvNm0rxTewQZSK",
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128",
+            )
 
-            try:
-                audio = elevenlabs.text_to_speech.convert(
-                    text=bubble.get_text(),
-                    voice_id="EDO68oHvNm0rxTewQZSK",
-                    model_id="eleven_multilingual_v2",
-                    output_format="mp3_44100_128",
-                )
+            audio_bytes = b"".join(audio)
 
-                audio_bytes = b"".join(audio)
-
+            
+            with open(f"temp_audio{ta}.mp3", "wb") as f:
+                f.write(audio_bytes)
                 
-                with open(f"temp_audio{ta}.mp3", "wb") as f:
-                    f.write(audio_bytes)
-                    
-                if not pygame.mixer.get_init():
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.mixer.init()
-                pygame.mixer.music.load(f"temp_audio{ta}.mp3")
-                pygame.mixer.music.play()
-                ta += 1
-            except:
-                pass
+            if not pygame.mixer.get_init():
+                pygame.mixer.music.stop()
+                pygame.mixer.quit()
+                pygame.mixer.init()
+            pygame.mixer.music.load(f"temp_audio{ta}.mp3")
+            pygame.mixer.music.play()
+            ta += 1
+
 
 
             with open("chatlog.txt", "a") as f:
