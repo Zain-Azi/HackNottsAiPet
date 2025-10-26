@@ -16,6 +16,69 @@ from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import os
 
+from vosk import Model, KaldiRecognizer
+import pyaudio, json, threading
+
+class VoskRecorder:
+   def __init__(self, model_path="/Users/jakedarkoh/Documents/HackNottsAiPet/vosk-model-small-en-us-0.15", sample_rate=16000):
+       self.model = Model(model_path)
+       self.sample_rate = sample_rate
+       self.p = pyaudio.PyAudio()
+       self.stream = None
+       self.recognizer = None
+       self.thread = None
+       self.stop_event = threading.Event()
+       self._text_lock = threading.Lock()
+       self._text = []
+
+
+   def _loop(self):
+       while not self.stop_event.is_set():
+           data = self.stream.read(4096, exception_on_overflow=False)
+           if self.recognizer.AcceptWaveform(data):
+               result = json.loads(self.recognizer.Result())
+               t = result.get("text", "").strip()
+               if t:
+                   with self._text_lock:
+                       self._text.append(t)
+       final = json.loads(self.recognizer.FinalResult())
+       t = final.get("text", "").strip()
+       if t:
+           with self._text_lock:
+               self._text.append(t)
+
+
+   def start(self):
+       if self.thread and self.thread.is_alive():
+           return
+       self.stop_event.clear()
+       self.recognizer = KaldiRecognizer(self.model, self.sample_rate)
+       self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=self.sample_rate,
+                                 input=True, frames_per_buffer=8192)
+       self.stream.start_stream()
+       with self._text_lock:
+           self._text = []
+       self.thread = threading.Thread(target=self._loop, daemon=True)
+       self.thread.start()
+       print("🎙️ recording started")
+
+
+   def stop(self) -> str:
+       if not self.thread:
+           return ""
+       self.stop_event.set()
+       self.thread.join()
+       self.stream.stop_stream()
+       self.stream.close()
+       self.stream = None
+       self.thread = None
+       text = ""
+       with self._text_lock:
+           text = " ".join(self._text).strip()
+           self._text = []
+       print("🛑 recording stopped")
+       return text
+
 # Arduino serial setup
 try:
     arduino = serial.Serial('COM5', 9600, timeout=1)#
@@ -36,7 +99,7 @@ textbox_w = 1100
 textbox_h = 60
 textbox_x = (window_w - textbox_w) // 2
 textbox_y = window_h - textbox_h - 20
-pygame_icon = pygame.image.load('assets\idle1.PNG')
+pygame_icon = pygame.image.load('/Users/jakedarkoh/Documents/HackNottsAiPet/assets/idle1.PNG')
 pygame.display.set_icon(pygame_icon)
 clock = pygame.time.Clock()
 FPS = 30
@@ -124,7 +187,8 @@ while not exit:
 
 
             with open("chatlog.txt", "a") as f:
-                f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
+               f.write("YOU: " + str(user_input) + "\nCheppie: " + bubble.get_text() + "\n")
+
 
                 
             
