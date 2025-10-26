@@ -17,7 +17,11 @@ from elevenlabs.client import ElevenLabs
 import os
 
 # Arduino serial setup
-arduino = serial.Serial('COM5', 9600, timeout=1)
+try:
+    arduino = serial.Serial('COM5', 9600, timeout=1)#
+except:
+    print("tried")
+    arduino = None
 
 load_dotenv()
 elevenlabs = ElevenLabs(
@@ -55,11 +59,14 @@ while not exit:
     clock.tick(FPS)
     
     #Arduino button
-    if arduino.in_waiting > 0:
-        line = arduino.readline().decode().strip()
-        if line == "pressed":
-            dragon.set_action("breathe_fire")
-            dragon.change_health(-50)
+    try:
+        if arduino.in_waiting > 0:
+            line = arduino.readline().decode().strip()
+            if line == "pressed":
+                dragon.set_action("breathe_fire")
+                dragon.change_health(-50)
+    except:
+        print("tried")
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
