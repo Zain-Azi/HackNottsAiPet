@@ -1,10 +1,14 @@
+import json
 import os
+import threading
 
+import pyaudio
 import pygame
 import serial
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
+from vosk import KaldiRecognizer, Model
 
 import emotion_react
 from dragon import Dragon
@@ -12,12 +16,7 @@ from feedbutton import FeedButton
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
-from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
-import os
 
-from vosk import Model, KaldiRecognizer
-import pyaudio, json, threading
 
 class VoskRecorder:
    def __init__(self, model_path="vosk-model-small-en-us-0.15", sample_rate=16000):
@@ -120,6 +119,7 @@ last_anim_update = pygame.time.get_ticks()
 
 current_sprite = "neutral1"
 
+talk_timer = 0
 while not exit:
     clock.tick(FPS)
     
@@ -154,6 +154,7 @@ while not exit:
             os.remove("temp_audio.mp3")
         if result is not None:
             dragon.set_action("talk")
+            talk_timer = 0
             user_input = result
             if user_input == "hello":
                 bubble = SpeechBubble(text="wagwan")
@@ -167,26 +168,30 @@ while not exit:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
                 bubble = SpeechBubble(text=x[0])
-            audio = elevenlabs.text_to_speech.convert(
-                text=bubble.get_text(),
-                voice_id="EDO68oHvNm0rxTewQZSK",
-                model_id="eleven_multilingual_v2",
-                output_format="mp3_44100_128",
-            )
 
-            audio_bytes = b"".join(audio)
+            try:
+                audio = elevenlabs.text_to_speech.convert(
+                    text=bubble.get_text(),
+                    voice_id="EDO68oHvNm0rxTewQZSK",
+                    model_id="eleven_multilingual_v2",
+                    output_format="mp3_44100_128",
+                )
 
-            
-            with open(f"temp_audio{ta}.mp3", "wb") as f:
-                f.write(audio_bytes)
+                audio_bytes = b"".join(audio)
+
                 
-            if not pygame.mixer.get_init():
-                pygame.mixer.music.stop()
-                pygame.mixer.quit()
-                pygame.mixer.init()
-            pygame.mixer.music.load(f"temp_audio{ta}.mp3")
-            pygame.mixer.music.play()
-            ta += 1
+                with open(f"temp_audio{ta}.mp3", "wb") as f:
+                    f.write(audio_bytes)
+                    
+                if not pygame.mixer.get_init():
+                    pygame.mixer.music.stop()
+                    pygame.mixer.quit()
+                    pygame.mixer.init()
+                pygame.mixer.music.load(f"temp_audio{ta}.mp3")
+                pygame.mixer.music.play()
+                ta += 1
+            except:
+                pass
 
 
 
@@ -203,12 +208,15 @@ while not exit:
         cheppie = dragon.get_mood() + str(sprite_value + 1)
         if dragon.get_action() == "talk" and sprite_value==1:
             cheppie = "talk" + cheppie
+        if talk_timer > 13:
+            dragon.set_action("idle")
 
     if pygame.time.get_ticks() - last_anim_update > 333:
         last_anim_update = pygame.time.get_ticks()
         sprite_value = (sprite_value + 1) % 6
         dragon.change_health(-2)
         current_sprite = cheppie
+        talk_timer = (talk_timer + 1)%15
 
     window.update(current_sprite, dragon.get_health())
     textbox.draw(window._Window__screen)
