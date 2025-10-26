@@ -92,7 +92,7 @@ while not exit:
             if user_input == "2":
                 bubble = SpeechBubble(text="wagwaaaaaaaaaaaaaaaaaaaaaaaaaaaaan")
             elif user_input == "ok":
-                bubble = SpeechBubble(text="Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh Bleh ")
+                bubble = SpeechBubble(text="Bleh")
             else:
                 x = emotion_react.dragon_output(user_input, dragon.get_health())
                 dragon.set_mood(x[1])
@@ -124,7 +124,8 @@ while not exit:
 
 
             with open("chatlog.txt", "a") as f:
-                f.write("YOU: " + user_input + "\nCheppie: " + bubble.get_text() + "\n")
+               f.write("YOU: " + str(user_input) + "\nCheppie: " + bubble.get_text() + "\n")
+
 
                 
             
