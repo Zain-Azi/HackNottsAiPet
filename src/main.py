@@ -1,6 +1,7 @@
 import os
 
 import pygame
+import serial
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
@@ -14,6 +15,9 @@ from window import Window
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import os
+
+# Arduino serial setup
+arduino = serial.Serial('COM5', 9600, timeout=1)
 
 load_dotenv()
 elevenlabs = ElevenLabs(
@@ -49,6 +53,14 @@ last_anim_update = pygame.time.get_ticks()
 
 while not exit:
     clock.tick(FPS)
+    
+    #Arduino button
+    if arduino.in_waiting > 0:
+        line = arduino.readline().decode().strip()
+        if line == "pressed":
+            dragon.set_action("breathe_fire")
+            dragon.change_health(-50)
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit = True
