@@ -36,7 +36,7 @@ class Window:
     def update(self, cheppie, hp):
         bg = pygame.transform.scale(self.__images["background"], (self.WIDTH, self.HEIGHT))
         self.__screen.blit(bg, (0, 0))
-        self.__screen.blit(pygame.transform.scale(self.__images["title"], (400, 100)), ((self.WIDTH - 400)/2, 20))
+        self.__screen.blit(pygame.transform.scale(self.__images["title"], (640, 360)), ((self.WIDTH - 640)/2, 20))
         self.__screen.blit(pygame.transform.scale(self.__images[cheppie], (400, 400)),
                         ((self.WIDTH - 400)/2, self.HEIGHT - 500))
         
