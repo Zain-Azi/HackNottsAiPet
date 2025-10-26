@@ -15,7 +15,7 @@ class SpeechBubble:
             self.rect = pygame.Rect(rect_x, 80, 1100, (height/2) + 30)
         else:
             rect_x = (1280 - text_width) // 2
-            self.rect = pygame.Rect(rect_x, 80, text_width + 50, text_height + 20)
+            self.rect = pygame.Rect(rect_x, 175, text_width + 50, text_height + 20)
         
         self.text_color = text_color
         self.bubble_color = bubble_color

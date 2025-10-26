@@ -1,7 +1,7 @@
 import os
 
 import pygame
-# import serial
+import serial
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
@@ -18,9 +18,6 @@ import os
 
 from vosk import Model, KaldiRecognizer
 import pyaudio, json, threading
-
-# # Arduino serial setup=
-# arduino = serial.Serial('/dev/tty.usbmodem14201', 9600, timeout=1)
 
 class VoskRecorder:
    def __init__(self, model_path="/Users/jakedarkoh/Documents/HackNottsAiPet/vosk-model-small-en-us-0.15", sample_rate=16000):
@@ -82,6 +79,13 @@ class VoskRecorder:
        print("🛑 recording stopped")
        return text
 
+# Arduino serial setup
+try:
+    arduino = serial.Serial('COM5', 9600, timeout=1)#
+except:
+    print("tried")
+    arduino = None
+
 load_dotenv()
 elevenlabs = ElevenLabs(
 
@@ -118,11 +122,14 @@ while not exit:
     clock.tick(FPS)
     
     #Arduino button
-    # if arduino.in_waiting > 0:
-    #     line = arduino.readline().decode().strip()
-    #     if line == "pressed":
-    #         dragon.set_action("breathe_fire")
-    #         dragon.change_health(-50)
+    try:
+        if arduino.in_waiting > 0:
+            line = arduino.readline().decode().strip()
+            if line == "pressed":
+                dragon.set_action("breathe_fire")
+                dragon.change_health(-50)
+    except:
+        print("tried")
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
