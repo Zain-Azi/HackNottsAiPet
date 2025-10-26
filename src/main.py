@@ -52,6 +52,8 @@ ta = 0
 
 last_anim_update = pygame.time.get_ticks()
 
+current_sprite = "neutral1"
+
 while not exit:
     clock.tick(FPS)
     
@@ -62,6 +64,7 @@ while not exit:
             if line == "pressed":
                 dragon.set_action("breathe_fire")
                 dragon.change_health(-50)
+                sprite_value = 0
     except:
         pass
     
@@ -75,6 +78,7 @@ while not exit:
             if event.key == pygame.K_LCTRL:
                 dragon.set_action("breathe_fire")
                 dragon.change_health(-50)
+                sprite_value = 0
             
         if feedbutton.handle_event(event):
             dragon.change_health(100)
@@ -125,30 +129,25 @@ while not exit:
 
             with open("chatlog.txt", "a") as f:
                f.write("YOU: " + str(user_input) + "\nCheppie: " + bubble.get_text() + "\n")
-
-
-                
-            
-    if pygame.time.get_ticks() - last_anim_update > 333:
-        last_anim_update = pygame.time.get_ticks()
-        sprite_value = (sprite_value + 1) % 6
-        dragon.change_health(-2)
     
     if dragon.get_action() == "breathe_fire":
-        if sprite_value == 0:
+        cheppie = "fire" + str(sprite_value + 1)
+        if sprite_value == 5:
             cheppie = "neutral1"
-        else:
-            cheppie = "fire" + str(sprite_value + 1)
-            if sprite_value == 5:
-                dragon.set_action("idle")
+            dragon.set_action("idle")
     else:
         sprite_value = sprite_value % 2
         cheppie = dragon.get_mood() + str(sprite_value + 1)
         if dragon.get_action() == "talk" and sprite_value==1:
             cheppie = "talk" + cheppie
 
+    if pygame.time.get_ticks() - last_anim_update > 333:
+        last_anim_update = pygame.time.get_ticks()
+        sprite_value = (sprite_value + 1) % 6
+        dragon.change_health(-2)
+        current_sprite = cheppie
 
-    window.update(cheppie, dragon.get_health())
+    window.update(current_sprite, dragon.get_health())
     textbox.draw(window._Window__screen)
     bubble.draw(window._Window__screen)
     feedbutton.draw(window._Window__screen)
