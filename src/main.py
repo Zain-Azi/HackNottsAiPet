@@ -1,20 +1,24 @@
+import os
+
 import pygame
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 
 import emotion_react
 from dragon import Dragon
+from feedbutton import FeedButton
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
-
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import os
 
-
 load_dotenv()
 elevenlabs = ElevenLabs(
 
-  api_key=os.getenv("ELEVENLABS_API_KEY"),
+    api_key=os.getenv("ELEVENLABS_API_KEY"),
 
 )
 window_w = 1280
@@ -34,6 +38,7 @@ dragon = Dragon("Cheppie")
 window = Window("Cheppie the Dragon", window_w, window_h)
 textbox = TextBox(textbox_x, textbox_y, textbox_w, textbox_h)
 bubble = SpeechBubble(text="Hello, I am "+ dragon.get_name()+"!")
+feedbutton = FeedButton(15, window_h - 150, 100, 50)
 
 exit = False
 
@@ -51,9 +56,13 @@ while not exit:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 exit = True
-            if event.key == pygame.K_f:
+            if event.key == pygame.K_LCTRL:
                 dragon.set_action("breathe_fire")
+                dragon.change_health(-50)
             
+        if feedbutton.handle_event(event):
+            dragon.change_health(100)
+
         result = textbox.handle_event(event)
         if os.path.exists("temp_audio.mp3"):
             os.remove("temp_audio.mp3")
@@ -122,6 +131,7 @@ while not exit:
     window.update(cheppie, dragon.get_health())
     textbox.draw(window._Window__screen)
     bubble.draw(window._Window__screen)
+    feedbutton.draw(window._Window__screen)
     pygame.display.update()
 
 for f in os.listdir():
