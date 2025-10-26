@@ -1,16 +1,15 @@
+import os
+
 import pygame
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 
 import emotion_react
 from dragon import Dragon
 from speechbubble import SpeechBubble
 from textbox import TextBox
 from window import Window
-
-from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
-from elevenlabs.play import play
-import os
-
 
 load_dotenv()
 elevenlabs = ElevenLabs(
@@ -50,7 +49,7 @@ while not exit:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 exit = True
-            if event.key == pygame.K_f:
+            if event.key == pygame.K_LCTRL:
                 dragon.set_action("breathe_fire")
             
         result = textbox.handle_event(event)
