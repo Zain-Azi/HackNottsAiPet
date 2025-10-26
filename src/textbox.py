@@ -3,7 +3,7 @@ import pygame
 class TextBox:
     def __init__(self, x, y, w, h, font_size=24, font_name=None, text_color=(50,50,50),
                  box_color=(255,255,255), outline_color=(0,0,0), outline_thickness=3,
-                 corner_radius=15, placeholder="Speak to your pet", send_button=True, record_button=True):
+                 corner_radius=15, placeholder="Speak to Cheppie", send_button=True, record_button=True):
         self.rect = pygame.Rect(x, y, w, h)
         self.color = box_color
         self.text_color = text_color
@@ -13,12 +13,8 @@ class TextBox:
         self.placeholder = placeholder
         self.active = False
         self.text = ""
-
-        if font_name:
-            self.font = pygame.font.SysFont("Comic Sans MS", font_size)
-        else:
-            self.font = pygame.font.SysFont("Comic Sans MS", font_size)
-
+        self.font = pygame.font.SysFont("Comic Sans MS", font_size)
+        
         self.send_button_enabled = send_button
         if self.send_button_enabled:
             self.button_width = 80
